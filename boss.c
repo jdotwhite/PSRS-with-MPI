@@ -132,9 +132,10 @@ long int boss(long int numKeys, int procs){
 	partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
 	memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 	subsizes[procs-1] = count;
-	for(int index = 0; index<localKeys; index++){
-		printf("index %ld: %ld\n", index, partitions[procs-1][index]);
-	}
+	//for(int index = 0; index<localKeys; index++){
+	//	printf("index %ld: %ld\n", index, partitions[procs-1][index]);
+	//}
+	return 0;
 }
 
 
@@ -180,6 +181,7 @@ long int employee(long int numKeys, int procs){
 		pivots[i] = pivBuff[i];
 	}
 	free(pivBuff);
+	return 0;
 	}
 
 
