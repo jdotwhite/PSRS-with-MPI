@@ -88,16 +88,18 @@ long int boss(long int numKeys, int procs){
 	for(int mult = 1; mult<p; mult++){
 		pivots[mult-1] = samples[(p + mult*procs)-1];
 	}
+	long int SendBuff[procs-1];
+	memcpy(SendBuff, pivots, (procs-1)*sizeof(long int));
 	//have pivots, now send them out to employees
 	for(int i=1; i<procs; i++){
-		MPI_Send(pivots, procs-1, MPI_LONG, i, 0, MPI_COMM_WORLD);
+		MPI_Send(SendBuff, procs-1, MPI_LONG, i, 0, MPI_COMM_WORLD);
 	}
 	//Now create partitions in both boss proc and employees
 	long int* partitions[procs];
 	long int subsizes[procs];
 	
 	long int index = 0;
-	
+	printf("boss here 1\n");
 	for(int piv = 0; piv<procs-1; piv++){
 		long int count = 0;
 		long int initial = index; 
