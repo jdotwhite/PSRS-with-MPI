@@ -125,6 +125,7 @@ long int boss(long int numKeys, int procs){
 	//for(int index = 0; index<localKeys; index++){
 	//	printf("index %ld: %ld\n", index, partitions[procs-1][index]);
 	//}
+	
 	free(array);
 	for(int i=0; i<procs; i++){
 		free(partitions[i]);
@@ -172,9 +173,9 @@ long int employee(long int numKeys, int procs){
 	long int sendBuff[procs];
 	
 	memcpy(sendBuff, samples, procs*sizeof(long int));
-
 	MPI_Send(sendBuff, procs, MPI_LONG, 0, 0, MPI_COMM_WORLD);
-
+	
+	free(sendBuff);
 	//now receive the pivots
 	long int* pivBuff = malloc((procs-1)*sizeof(long int));
 	long int pivots[procs-1];
@@ -182,8 +183,46 @@ long int employee(long int numKeys, int procs){
 	for(int i=0; i<procs-1; i++){
 		pivots[i] = pivBuff[i];
 	}
+	
+	//create our partitions
+	long int* partitions[procs];
+	long int subsizes[procs];
+	
+	long int index = 0;
+	
+	for(int piv = 0; piv<procs-1; piv++){
+		long int count = 0;
+		long int initial = index; 
+
+		while(array[index] <= pivots[piv]){
+			index++;
+			count++;
+	
+		}
+		partitions[piv] = (long int*)malloc(count * sizeof(long int));
+		memcpy(partitions[piv], &array[initial], count*sizeof(long int));
+		subsizes[piv] = count;
+
+	}
+	//partitions[procs-1] = (long int*)malloc(localKeys*sizeof(long int));
+	long int count = 0;
+	long int initial = index; 
+	while(index < localKeys){
+		index++;
+		count++;
+	}
+	partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
+	memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
+	subsizes[procs-1] = count;
+	//now that we have our partitions and their accompanying sizes, 
+	//send the partitions to their appropriate ranks
+	
+	for(int i = 0; i < procs; i++){
+		long int SendBuff[subsizes[i]];
+		memcpy(SendBuff, partitions[i], subsizes[i]*sizeof(long int));
+	}
 	free(pivBuff);
-	printf("employee2");
+	
 	free(array);
 	return 0;
 	}
