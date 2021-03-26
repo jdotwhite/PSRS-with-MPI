@@ -63,19 +63,20 @@ long int boss(long int numKeys, int procs){
 	qsort(array, localKeys, sizeof(long int), comparison);
 	
 	long int samples[procs*procs];
-	//find samples
+	//find samplesn
+	printf("Samples:\n");
 	for(int sample = 0; sample < procs; sample++){
 		samples[sample] = array[sample*w];
 		printf("%ld\n", samples[sample]);
 	}
 	//Phase 2, begin by receiving other samples
 	long int* sampleBuff = malloc(procs*sizeof(long int));
-	memcpy(sampleBuff, samples, procs*sizeof(long int));
 	for(int i=1; i < procs; i++){
 		MPI_Recv(sampleBuff, procs, MPI_LONG, i , MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		for(int x = 0; x < procs; x++){
 			int index = i * procs + x;
 			samples[index] = sampleBuff[x];
+			printf("%ld\n", samples[index]);
 		}
 
 	}
