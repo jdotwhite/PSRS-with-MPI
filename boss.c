@@ -120,8 +120,6 @@ long int boss(long int numKeys, int procs){
 	long int count = 0;
 	long int initial = index; 
 	while(index < localKeys){
-		//partitions[procs-1][subIndex] = array[index];
-		//printf("index %ld: %ld\n", index, partitions[procs-1][subIndex]);
 		index++;
 		count++;
 	}
@@ -132,6 +130,10 @@ long int boss(long int numKeys, int procs){
 	//	printf("index %ld: %ld\n", index, partitions[procs-1][index]);
 	//}
 	free(array);
+	for(int i=0; i<procs; i++){
+		free(partitions[i]);
+	}
+	
 
 	return 0;
 }
