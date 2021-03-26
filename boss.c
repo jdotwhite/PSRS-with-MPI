@@ -87,6 +87,7 @@ long int boss(long int numKeys, int procs){
 	long int pivots[procs-1];
 	for(int mult = 1; mult<p; mult++){
 		pivots[mult-1] = samples[(p + mult*procs)-1];
+		printf("%ld\n", pivots[mult-1]);
 	}
 	long int SendBuff[procs-1];
 	memcpy(SendBuff, pivots, (procs-1)*sizeof(long int));
