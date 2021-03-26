@@ -70,6 +70,7 @@ long int boss(long int numKeys, int procs){
 	}
 	//Phase 2, begin by receiving other samples
 	long int* sampleBuff = malloc(procs*sizeof(long int));
+	memcpy(sampleBuff, samples, procs*sizeof(long int));
 	for(int i=1; i < procs; i++){
 		MPI_Recv(sampleBuff, procs, MPI_LONG, i , MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		for(int x = 0; x < procs; x++){
@@ -85,10 +86,11 @@ long int boss(long int numKeys, int procs){
 	
 	qsort(samples, procs*procs, sizeof(long int), comparison);
 	long int pivots[procs-1];
+
 	for(int mult = 1; mult<p; mult++){
 		pivots[mult-1] = samples[(p + mult*procs)-1];
-		printf("%ld\n", pivots[mult-1]);
 	}
+
 	long int SendBuff[procs-1];
 	memcpy(SendBuff, pivots, (procs-1)*sizeof(long int));
 	//have pivots, now send them out to employees
