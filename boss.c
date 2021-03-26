@@ -166,13 +166,13 @@ long int employee(long int numKeys, int procs){
 	array = genKeys(localKeys);
 	qsort(array, localKeys, sizeof(long int), comparison);
 
-	long int samples[procs*procs];
+	long int samples[procs];
 	//find samples
 	for(int sample = 0; sample < procs; sample++){
 		samples[sample] = array[sample*w];
-		printf("%ld\n", samples[sample]);
+		//printf("%ld\n", samples[sample]);
 	}
-	printf("employee here1\n");
+	//printf("employee here1\n");
 	//samples collected, send those bad boys on their way
 	//Begin Phase 2
 
