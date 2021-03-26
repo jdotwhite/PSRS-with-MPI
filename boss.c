@@ -69,12 +69,11 @@ long int boss(long int numKeys, int procs){
 		printf("%ld\n", samples[sample]);
 	}
 	//Phase 2, begin by receiving other samples
-	//we are in rank 0, so begin at 1 as we already have local samples
 	long int* sampleBuff = malloc(procs*sizeof(long int));
 	for(int i=1; i < procs; i++){
-		MPI_Recv(sampleBuff, procs, MPI_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		MPI_Recv(sampleBuff, procs, MPI_LONG, i , MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		for(int x = 0; x < procs; x++){
-			int index = i*procs + x;
+			int index = i * procs + x;
 			samples[index] = sampleBuff[x];
 		}
 
@@ -101,12 +100,8 @@ long int boss(long int numKeys, int procs){
 	for(int piv = 0; piv<procs-1; piv++){
 		long int count = 0;
 		long int initial = index; 
-		//partitions[piv] = (long int*)malloc(localKeys*sizeof(long int));
-	
+
 		while(array[index] < pivots[piv]){
-			
-			//partitions[piv][subIndex] = array[index];
-			//printf("%ld\n", partitions[piv][subIndex]);
 			index++;
 			count++;
 	
@@ -134,7 +129,7 @@ long int boss(long int numKeys, int procs){
 		free(partitions[i]);
 	}
 	
-
+	printf("boss here\n");
 	return 0;
 }
 
