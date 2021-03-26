@@ -167,6 +167,7 @@ long int employee(long int numKeys, int procs){
 		samples[sample] = array[sample*w];
 		printf("%ld\n", samples[sample]);
 	}
+	printf("employee here1\n");
 	//samples collected, send those bad boys on their way
 	//Begin Phase 2
 
@@ -181,6 +182,7 @@ long int employee(long int numKeys, int procs){
 		pivots[i] = pivBuff[i];
 	}
 	free(pivBuff);
+	printf("employee2");
 	return 0;
 	}
 
