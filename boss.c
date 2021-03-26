@@ -35,7 +35,7 @@ int main( int argc, char *argv[]){
 	}
 	printf("here\n");
 	MPI_Finalize();
-	return 0;
+	return EXIT_SUCCESS;
 
 
 
