@@ -70,8 +70,8 @@ long int boss(long int numKeys, int procs){
 		printf("%ld\n", samples[sample]);
 	}
 	//Phase 2, begin by receiving other samples
-	long int* sampleBuff = malloc(procs*sizeof(long int));
 	for(int i=1; i < procs; i++){
+		long int* sampleBuff = malloc(procs*sizeof(long int));
 		MPI_Recv(sampleBuff, procs, MPI_LONG, i , MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		for(int x = 0; x < procs; x++){
 			int index = i * procs + x;
