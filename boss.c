@@ -33,11 +33,6 @@ int main( int argc, char *argv[]){
 		printf("Just an employee\n");
 		employee(numKeys, procs);
 	}
-
-	long int *array = genKeys(numKeys);
-
-
-
 	printf("here\n");
 	MPI_Finalize();
 	return 0;
@@ -135,6 +130,8 @@ long int boss(long int numKeys, int procs){
 	//for(int index = 0; index<localKeys; index++){
 	//	printf("index %ld: %ld\n", index, partitions[procs-1][index]);
 	//}
+	free(array);
+
 	return 0;
 }
 
@@ -183,6 +180,7 @@ long int employee(long int numKeys, int procs){
 	}
 	free(pivBuff);
 	printf("employee2");
+	free(array);
 	return 0;
 	}
 
