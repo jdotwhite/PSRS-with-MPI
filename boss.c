@@ -170,6 +170,8 @@ long int employee(long int numKeys, int procs){
 	//Begin Phase 2
 
 	long int sendBuff[procs];
+	memcpy(sendBuff, samples, procs*sizeof(long int));
+
 	MPI_Send(sendBuff, procs, MPI_LONG, 0, 0, MPI_COMM_WORLD);
 
 	//now receive the pivots
