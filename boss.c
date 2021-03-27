@@ -77,7 +77,7 @@ long int boss(long int numKeys, int procs){
 			samples[index] = sampleBuff[x];
 			printf("%ld\n", samples[index]);
 		}
-		//free(sampleBuff);
+		free(sampleBuff);
 
 	}
 
@@ -132,7 +132,7 @@ long int boss(long int numKeys, int procs){
 	//	printf("index %ld: %ld\n", index, partitions[procs-1][index]);
 	//}
 	
-	//free(array);
+	free(array);
 	//for(int i=0; i<procs; i++){
 	//	free(partitions[i]);
 	//}
@@ -227,7 +227,7 @@ long int employee(long int numKeys, int procs){
 	}
 	//free(pivBuff);
 	
-	//free(array);
+	free(array);
 	return 0;
 	}
 
