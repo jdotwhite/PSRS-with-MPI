@@ -132,10 +132,10 @@ long int boss(long int numKeys, int procs){
 	//	printf("index %ld: %ld\n", index, partitions[procs-1][index]);
 	//}
 	
-	free(array);
-	for(int i=0; i<procs; i++){
-		free(partitions[i]);
-	}
+	//free(array);
+	//for(int i=0; i<procs; i++){
+	//	free(partitions[i]);
+	//}
 	
 	printf("boss here\n");
 	
@@ -187,7 +187,7 @@ long int employee(long int numKeys, int procs){
 	for(int i=0; i<procs-1; i++){
 		pivots[i] = pivBuff[i];
 	}
-	free(pivBuff);
+	//free(pivBuff);
 	//create our partitions
 	long int* partitions[procs];
 	long int subsizes[procs];
@@ -225,9 +225,9 @@ long int employee(long int numKeys, int procs){
 		long int SendBuff[subsizes[i]];
 		memcpy(SendBuff, partitions[i], subsizes[i]*sizeof(long int));
 	}
-	free(pivBuff);
+	//free(pivBuff);
 	
-	free(array);
+	//free(array);
 	return 0;
 	}
 
