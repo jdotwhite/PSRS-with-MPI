@@ -121,8 +121,7 @@ long int boss(long int numKeys, int procs){
 	}
 	printf("boss here 2");
 	//partitions[procs-1] = (long int*)malloc(localKeys*sizeof(long int));
-	long int count = 0;
-	long int initial = index; 
+	long int count = 0; 
 	while(index < localKeys){
 		index++;
 		count++;
