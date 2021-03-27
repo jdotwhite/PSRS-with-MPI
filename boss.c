@@ -233,7 +233,7 @@ long int employee(long int numKeys, int procs){
 	//send the partitions to their appropriate ranks
 	
 	for(int i = 0; i < procs; i++){
-		long int SendBuff[subsizes[i]];
+		long int* SendBuff = malloc(subsizes[i] * sizeof(long int));
 		memcpy(SendBuff, partitions[i], subsizes[i]*sizeof(long int));
 	}
 
