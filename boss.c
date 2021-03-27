@@ -58,8 +58,7 @@ long int boss(long int numKeys, int procs){
 	
 	//Begin phase 1
 	srandom(3*23);
-	long int *array = (long int*)malloc(localKeys * sizeof(long int));
-	array = genKeys(localKeys);
+	long int *array = genKeys(localKeys);
 	qsort(array, localKeys, sizeof(long int), comparison);
 	
 	long int samples[procs*procs];
@@ -92,7 +91,7 @@ long int boss(long int numKeys, int procs){
 		pivots[mult-1] = samples[(p + mult*procs)-1];
 	}
 
-	long int SendBuff[procs-1];
+	long int *SendBuff;
 	memcpy(SendBuff, pivots, (procs-1)*sizeof(long int));
 	//have pivots, now send them out to employees
 	for(int i=1; i<procs; i++){
