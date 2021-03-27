@@ -173,7 +173,7 @@ long int employee(long int numKeys, int procs){
 		samples[sample] = array[sample*w];
 		//printf("%ld\n", samples[sample]);
 	}
-	//printf("employee here1\n");
+	printf("employee here1\n");
 	//samples collected, send those bad boys on their way
 	//Begin Phase 2
 
@@ -200,7 +200,7 @@ long int employee(long int numKeys, int procs){
 		long int count = 0;
 		long int initial = index; 
 
-		while(array[index] <= pivots[piv]){
+		while((array[index] <= pivots[piv]) && (index < localKeys)){
 			index++;
 			count++;
 	
@@ -217,9 +217,11 @@ long int employee(long int numKeys, int procs){
 		index++;
 		count++;
 	}
-	partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
-	memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
-	subsizes[procs-1] = count;
+	if(count>0){
+		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
+		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
+		subsizes[procs-1] = count;
+	}
 	//now that we have our partitions and their accompanying sizes, 
 	//send the partitions to their appropriate ranks
 	
@@ -228,6 +230,7 @@ long int employee(long int numKeys, int procs){
 		memcpy(SendBuff, partitions[i], subsizes[i]*sizeof(long int));
 	}
 	free(array);
+	printf("employee here 2");
 	return 0;
 	}
 
