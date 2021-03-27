@@ -98,39 +98,6 @@ long int boss(long int numKeys, int procs){
 		MPI_Send(SendBuff, procs-1, MPI_LONG, i, 0, MPI_COMM_WORLD);
 	}
 	//Now create partitions in both boss proc and employees
-	long int* partitions[procs];
-	long int subsizes[procs];
-	
-	long int index = 0;
-	long int initial = 0;
-	printf("boss here 1\n");
-	fflush(stdout);
-	for(int piv = 0; piv<procs-1; piv++){
-		long int count = 0; 
-
-		while((array[index] <= pivots[piv]) && (index < localKeys)){
-			index++;
-			count++;
-	
-		}
-		partitions[piv] = (long int*)malloc(count * sizeof(long int));
-		memcpy(partitions[piv], &array[initial], count*sizeof(long int));
-		subsizes[piv] = count;
-		initial = index;
-
-	}
-	printf("boss here 2");
-	//partitions[procs-1] = (long int*)malloc(localKeys*sizeof(long int));
-	long int count = 0; 
-	while(index < localKeys){
-		index++;
-		count++;
-	}
-	if(count > 0){
-		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
-		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
-		subsizes[procs-1] = count;
-	}
 	//for(int index = 0; index<localKeys; index++){
 	//	printf("index %ld: %ld\n", index, partitions[procs-1][index]);
 	//}
