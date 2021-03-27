@@ -162,8 +162,7 @@ long int employee(long int numKeys, int procs){
 	//Begin phase 1
 	//create local array, sort and find samples
 	srandom(rank * 23);
-	long int *array = (long int*)malloc(localKeys * sizeof(long int));
-	array = genKeys(localKeys);
+	long int *array = genKeys(localKeys);
 	qsort(array, localKeys, sizeof(long int), comparison);
 
 	long int samples[procs];
@@ -181,7 +180,6 @@ long int employee(long int numKeys, int procs){
 	memcpy(sendBuff, samples, procs*sizeof(long int));
 	MPI_Send(sendBuff, procs, MPI_LONG, 0, 0, MPI_COMM_WORLD);
 	
-	free(sendBuff);
 	//now receive the pivots
 	long int* pivBuff = malloc((procs-1)*sizeof(long int));
 	long int pivots[procs-1];
@@ -189,7 +187,7 @@ long int employee(long int numKeys, int procs){
 	for(int i=0; i<procs-1; i++){
 		pivots[i] = pivBuff[i];
 	}
-	
+	free(pivBuff);
 	//create our partitions
 	long int* partitions[procs];
 	long int subsizes[procs];
