@@ -77,7 +77,7 @@ long int boss(long int numKeys, int procs){
 			samples[index] = sampleBuff[x];
 			printf("%ld\n", samples[index]);
 		}
-		free(sampleBuff);
+		//free(sampleBuff);
 
 	}
 
