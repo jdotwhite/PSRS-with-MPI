@@ -81,7 +81,7 @@ long int boss(long int numKeys, int procs){
 
 	}
 	for(int i = 0; i<procs*procs; i++){
-		printf("%ld\n", samples[index]);
+		printf("%ld\n", samples[i]);
 	}
 
 	//now we have the samples from all processors
