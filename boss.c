@@ -178,58 +178,21 @@ long int employee(long int numKeys, int procs){
 	//samples collected, send those bad boys on their way
 	//Begin Phase 2
 
-	long int sendBuff[procs];
-	
+	long int* sendBuff = malloc(procs * sizeof(long int));
 	memcpy(sendBuff, samples, procs*sizeof(long int));
+
 	MPI_Send(sendBuff, procs, MPI_LONG, 0, 0, MPI_COMM_WORLD);
 	
 	//now receive the pivots
 	long int* pivBuff = malloc((procs-1)*sizeof(long int));
-	long int pivots[procs-1];
+	long int* pivots = malloc((procs-1)*sizeof(long int));
 	MPI_Recv(pivBuff, procs-1, MPI_LONG, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-	for(int i=0; i<procs-1; i++){
-		pivots[i] = pivBuff[i];
-	}
+	
+	memcpy(pivots, pivBuff, (procs-1)*sizeof(long int));
+
 	free(pivBuff);
+	printf("employee here!!\n");
 	//create our partitions
-	long int* partitions[procs];
-	long int subsizes[procs];
-	
-	long int index = 0;
-	
-	for(int piv = 0; piv<procs-1; piv++){
-		long int count = 0;
-		long int initial = index; 
-
-		while((array[index] <= pivots[piv]) && (index < localKeys)){
-			index++;
-			count++;
-	
-		}
-		partitions[piv] = (long int*)malloc(count * sizeof(long int));
-		memcpy(partitions[piv], &array[initial], count*sizeof(long int));
-		subsizes[piv] = count;
-
-	}
-	//partitions[procs-1] = (long int*)malloc(localKeys*sizeof(long int));
-	long int count = 0;
-	long int initial = index; 
-	while(index < localKeys){
-		index++;
-		count++;
-	}
-	if(count>0){
-		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
-		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
-		subsizes[procs-1] = count;
-	}
-	//now that we have our partitions and their accompanying sizes, 
-	//send the partitions to their appropriate ranks
-	
-	for(int i = 0; i < procs; i++){
-		long int SendBuff[subsizes[i]];
-		memcpy(SendBuff, partitions[i], subsizes[i]*sizeof(long int));
-	}
 	free(array);
 	printf("employee here 2");
 	return 0;
