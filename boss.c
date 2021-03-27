@@ -103,10 +103,10 @@ long int boss(long int numKeys, int procs){
 	long int subsizes[procs];
 	
 	long int index = 0;
+	long int initial = 0;
 	printf("boss here 1\n");
 	for(int piv = 0; piv<procs-1; piv++){
-		long int count = 0;
-		long int initial = index; 
+		long int count = 0; 
 
 		while(array[index] <= pivots[piv]){
 			index++;
@@ -116,8 +116,10 @@ long int boss(long int numKeys, int procs){
 		partitions[piv] = (long int*)malloc(count * sizeof(long int));
 		memcpy(partitions[piv], &array[initial], count*sizeof(long int));
 		subsizes[piv] = count;
+		initial = index;
 
 	}
+	printf("boss here 2");
 	//partitions[procs-1] = (long int*)malloc(localKeys*sizeof(long int));
 	long int count = 0;
 	long int initial = index; 
