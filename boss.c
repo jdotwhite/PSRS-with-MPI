@@ -98,6 +98,7 @@ long int boss(long int numKeys, int procs){
 	for(int i=1; i<procs; i++){
 		MPI_Send(SendBuff, procs-1, MPI_LONG, i, 0, MPI_COMM_WORLD);
 	}
+	free(SendBuff);
 	//Now create partitions in both boss proc and employees
 	long int* partitions[procs];
 	long int subsizes[procs];
@@ -139,9 +140,9 @@ long int boss(long int numKeys, int procs){
 	//}
 	
 	free(array);
-	//for(int i=0; i<procs; i++){
-	//	free(partitions[i]);
-	//}
+	for(int i=0; i<procs; i++){
+		free(partitions[i]);
+	}
 	
 	printf("boss here\n");
 	
@@ -235,6 +236,10 @@ long int employee(long int numKeys, int procs){
 	for(int i = 0; i < procs; i++){
 		long int* SendBuff = malloc(subsizes[i] * sizeof(long int));
 		memcpy(SendBuff, partitions[i], subsizes[i]*sizeof(long int));
+		free(SendBuff);
+	}
+	for(int i=0; i<procs; i++){
+		free(partitions[i]);
 	}
 
 	free(array);
