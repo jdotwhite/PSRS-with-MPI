@@ -66,7 +66,7 @@ long int boss(long int numKeys, int procs){
 	printf("Samples:\n");
 	for(int sample = 0; sample < procs; sample++){
 		samples[sample] = array[sample*w];
-		printf("%ld\n", samples[sample]);
+		//printf("%ld\n", samples[sample]);
 	}
 	//Phase 2, begin by receiving other samples
 	for(int i=1; i < procs; i++){
@@ -75,10 +75,13 @@ long int boss(long int numKeys, int procs){
 		for(int x = 0; x < procs; x++){
 			int index = i * procs + x;
 			samples[index] = sampleBuff[x];
-			printf("%ld\n", samples[index]);
+			//printf("%ld\n", samples[index]);
 		}
 		free(sampleBuff);
 
+	}
+	for(int i = 0; i<procs*procs; i++){
+		printf("%ld\n", samples[index]);
 	}
 
 	//now we have the samples from all processors
@@ -91,7 +94,7 @@ long int boss(long int numKeys, int procs){
 		pivots[mult-1] = samples[(p + mult*procs)-1];
 	}
 
-	long int *SendBuff;
+	long int *SendBuff = malloc((procs-1) * sizeof(long int));
 	memcpy(SendBuff, pivots, (procs-1)*sizeof(long int));
 	//have pivots, now send them out to employees
 	for(int i=1; i<procs; i++){
