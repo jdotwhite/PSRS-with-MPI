@@ -104,6 +104,7 @@ long int boss(long int numKeys, int procs){
 	long int index = 0;
 	long int initial = 0;
 	printf("boss here 1\n");
+	fflush(stdout);
 	for(int piv = 0; piv<procs-1; piv++){
 		long int count = 0; 
 
