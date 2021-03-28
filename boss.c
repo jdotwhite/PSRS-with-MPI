@@ -135,7 +135,7 @@ long int boss(long int numKeys, int procs){
 		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
-		free(partitions[piv]);
+		free(partitions[procs-1]);
 	}
 
 
