@@ -139,8 +139,8 @@ long int boss(long int numKeys, int procs){
 	}
 	for(int sendRank = 1; sendRank<procs; sendRank++){
 	
-		MPI_Send(partitions[piv], subsize[piv], MPI_LONG, piv, 0, MPI_COMM_WORLD);
-		free(partitions[piv]);
+		MPI_Send(partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
+		free(partitions[sendRank]);
 		}
 	for (int recvRank = 1; recvRank<procs; recvRank++){
 		long int size;
@@ -247,8 +247,8 @@ long int employee(long int numKeys, int procs){
 	
 	for(int sendRank = 0; sendRank<procs; sendRank++){
 		if (sendRank!=rank){
-			MPI_Send(partitions[piv], subsize[piv], MPI_LONG, piv, 0, MPI_COMM_WORLD);
-			free(partitions[piv]);
+			MPI_Send(partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
+			free(partitions[sendRank]);
 		}
 		}
 
