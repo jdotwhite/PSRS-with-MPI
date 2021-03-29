@@ -108,8 +108,7 @@ long int boss(long int numKeys, int procs){
 	fflush(stdout);
 	for(int piv = 0; piv<procs-1; piv++){
 		long int count = 0; 
-		printf("Pivot: %ld\n", pivots[piv]);
-
+		
 		while((array[index] <= pivots[piv]) && (index < localKeys)){
 			index++;
 			count++;
@@ -134,17 +133,34 @@ long int boss(long int numKeys, int procs){
 	}
 	subsizes[procs-1] = count;
 	if(count > 0){
-		printf("HERE THANKS");
 		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
-		for(int i=0; i<count;i++){
-			printf("%ld, ", partitions[procs-1][i]);
-			}
-		printf("\n\n");
-
 	}
 
+	
+	for(int sendRank = 1; sendRank<procs; sendRank++){
+		long int* partBuff = malloc(subsizes[sendRank]*sizeof(long int));
+		memcpy(partBuff, partitions[sendRank], subsizes[sendRank]*sizeof(long int));
+		MPI_Send(&subsizes[sendRank], 1, MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
+		MPI_Send(partBuff, subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
+		free(partitions[sendRank]);
+		}
+	
+	printf("boss here3\n");
+
+	for (int recvRank = 1; recvRank<procs; recvRank++){
+		long int *size = malloc(sizeof(long int));
+		MPI_Recv(size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		long int *partBuff = malloc( *size * sizeof(long int));
+		partitions[recvRank] = malloc( *size * sizeof(long int));
+		long int recSize = *size;
+		free(size);
+		MPI_Recv( partBuff, recSize, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
+		memcpy(partitions[recvRank], partBuff, recSize*sizeof(long int));
+		free(partBuff);
+
+		}
 
 
 	free(array);	
@@ -219,10 +235,8 @@ long int employee(long int numKeys, int procs){
 			partitions[piv] = (long int*)malloc(count * sizeof(long int));
 			memcpy(partitions[piv], &array[initial], count*sizeof(long int));
 			for(int i=0; i<count;i++){
-				printf("%ld, ", partitions[piv][i]);
-			}
-			printf("\n\n");
-
+				}
+			
 		}
 		subsizes[piv] = count;
 		initial = index;
@@ -240,15 +254,35 @@ long int employee(long int numKeys, int procs){
 		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
-		for(int i=0; i<count;i++){
-			printf("%ld, ", partitions[procs-1][i]);
-			}
-		printf("\n\n");
-
-	}
+		}
 	//now that we have our partitions and their accompanying sizes, 
 	//send the partitions to their appropriate ranks
-		
+	
+	for(int sendRank = 0; sendRank<procs; sendRank++){
+		if (sendRank!=rank){
+			long int* partBuff = malloc(subsizes[sendRank]*sizeof(long int));
+			memcpy(partBuff, partitions[sendRank], subsizes[sendRank]*sizeof(long int));
+			MPI_Send(&subsizes[sendRank], 1, MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
+			MPI_Send(partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
+			free(partitions[sendRank]);
+		}
+		}
+
+	for (int recvRank = 0; recvRank<procs; recvRank++){
+		if(recvRank != rank){
+			long int *size = malloc(sizeof(long int));
+			MPI_Recv(size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+			long int *partBuff = malloc( *size * sizeof(long int));
+			partitions[recvRank] = malloc( *size * sizeof(long int));
+			long int recSize = *size;
+			free(size);
+			MPI_Recv( partBuff, recSize, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
+			memcpy(partitions[recvRank], partBuff, recSize*sizeof(long int));
+			free(partBuff);
+		}
+	}
+
+
 	free(array);
 	printf("employee here 3\n");
 	return 0;
