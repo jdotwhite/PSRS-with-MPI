@@ -164,7 +164,7 @@ long int boss(long int numKeys, int procs){
 
 
 	t3 = MPI_Wtime();
-	printf("P3: %.8lf");
+	printf("P3: %.8lf\n", t3-t2;);
 	//Phase 4, Merge, receive, merge
 
 	long int running_size = subsizes[0];
