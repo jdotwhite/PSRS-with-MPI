@@ -119,7 +119,6 @@ long int boss(long int numKeys, int procs){
 			//now we have the partition, send it
 			partitions[piv] = (long int*)malloc(count * sizeof(long int));
 			memcpy(partitions[piv], &array[initial], count*sizeof(long int));
-			printf("\n\n");
 			}
 		initial = index;
 
@@ -163,7 +162,8 @@ long int boss(long int numKeys, int procs){
 
 		}
 	long int running_size = subsizes[0];
-	long int* final = partitions[0];
+	long int* final = malloc(running_size*sizeof(long int));
+	memcpy(final, partitions[0], running_size*sizeof(long int));
 	for(int i=1; i<procs; i++){
 		if(subsizes[i] > 0){
 			final = MergeSubs(final, partitions[i], running_size, subsizes[i]);
@@ -243,8 +243,6 @@ long int employee(long int numKeys, int procs){
 		if(count > 0){
 			partitions[piv] = (long int*)malloc(count * sizeof(long int));
 			memcpy(partitions[piv], &array[initial], count*sizeof(long int));
-			for(int i=0; i<count;i++){
-				}
 			
 		}
 		subsizes[piv] = count;
@@ -294,7 +292,9 @@ long int employee(long int numKeys, int procs){
 	//now we have the correct partitions, merge them up
 	
 	long int running_size = subsizes[0];
-	long int* final = partitions[0];
+	long int* final = malloc(running_size*sizeof(long int));
+	memcpy(final, partitions[0], running_size*sizeof(long int));
+
 	for(int i=1; i<procs; i++){
 		if(subsizes[i] > 0){
 			final = MergeSubs(final, partitions[i], running_size, subsizes[i]);
