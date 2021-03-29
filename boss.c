@@ -247,7 +247,6 @@ long int employee(long int numKeys, int procs){
 		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
-		free(partitions[procs-1]);
 	}
 	//now that we have our partitions and their accompanying sizes, 
 	//send the partitions to their appropriate ranks
