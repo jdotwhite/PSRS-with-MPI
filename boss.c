@@ -137,6 +137,7 @@ long int boss(long int numKeys, int procs){
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
 	}
+
 	for(int sendRank = 1; sendRank<procs; sendRank++){
 	
 		MPI_Send(partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
@@ -151,7 +152,6 @@ long int boss(long int numKeys, int procs){
 		MPI_Recv( partBuff, size, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
 		memcpy(partitions[recvRank], partBuff, size*sizeof(long int));
 		free(partBuff);
-		free(&size);
 		}
 
 	for(int i =0; i<procs; i++){
@@ -259,7 +259,7 @@ long int employee(long int numKeys, int procs){
 		}
 		}
 
-	for (int recvRank; recvRank<procs; recvRank++){
+	for (int recvRank = 0; recvRank<procs; recvRank++){
 		if(recvRank != rank){
 			long int size;
 			MPI_Recv(&size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
@@ -268,7 +268,6 @@ long int employee(long int numKeys, int procs){
 			MPI_Recv( partBuff, size, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
 			memcpy(partitions[recvRank], partBuff, size*sizeof(long int));
 			free(partBuff);
-			free(&size);
 
 		}
 
