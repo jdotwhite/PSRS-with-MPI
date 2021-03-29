@@ -195,7 +195,7 @@ long int employee(long int numKeys, int procs){
 	long int* pivots = malloc((procs-1)*sizeof(long int));
 	MPI_Recv(pivBuff, procs-1, MPI_LONG, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 	
-	memcpy(pivots, pivBuff, (procs-1)*sizeof(long int));
+	*pivots = *pivBuff;
 
 	free(pivBuff);
 	//create our partitions
