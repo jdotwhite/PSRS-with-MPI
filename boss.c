@@ -152,6 +152,7 @@ long int boss(long int numKeys, int procs){
 		//send and recv sizes
 		MPI_Sendrecv(sizeSend, 1, MPI_LONG, sendRank, 0, sizeRec, 1, MPI_LONG, sendRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		subsizes[sendRank] = *sizeRec;
+		partitions[sendRank] = malloc(subsizes[sendRank] * sizeof(long int));
 		MPI_Sendrecv(partBuff, *sizeSend, MPI_LONG, sendRank, 0, partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		free(partBuff);
 		free(sizeRec);
@@ -300,6 +301,7 @@ long int employee(long int numKeys, int procs){
 			//send and recv sizes
 			MPI_Sendrecv(sizeSend, 1, MPI_LONG, sendRank, 0, sizeRec, 1, MPI_LONG, sendRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 			subsizes[sendRank] = *sizeRec;
+			partitions[sendRank] = malloc(subsizes[sendRank] * sizeof(long int));
 			MPI_Sendrecv(partBuff, *sizeSend, MPI_LONG, sendRank, 0, partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 			free(partBuff);
 			free(sizeRec);
