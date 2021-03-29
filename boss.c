@@ -151,7 +151,7 @@ long int boss(long int numKeys, int procs){
 		MPI_Recv( partBuff, size, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
 		memcpy(partitions[recvRank], partBuff, size*sizeof(long int));
 		free(partBuff);
-		free(size);
+		free(&size);
 		}
 
 	for(int i =0; i<procs; i++){
@@ -268,7 +268,7 @@ long int employee(long int numKeys, int procs){
 			MPI_Recv( partBuff, size, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
 			memcpy(partitions[recvRank], partBuff, size*sizeof(long int));
 			free(partBuff);
-			free(size);
+			free(&size);
 
 		}
 
