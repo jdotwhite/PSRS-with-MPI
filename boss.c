@@ -153,7 +153,7 @@ long int boss(long int numKeys, int procs){
 		}
 
 	for(int i =0; i<procs; i++){
-		free(partitions[piv];
+		free(partitions[i]);
 	}
 
 
@@ -272,7 +272,7 @@ long int employee(long int numKeys, int procs){
 	}
 		
 	for(int i =0; i<procs; i++){
-		free(partitions[piv];
+		free(partitions[i]);
 	}
 
 
