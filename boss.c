@@ -141,7 +141,7 @@ long int boss(long int numKeys, int procs){
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
 		for(int i=0; i<count;i++){
-			printf("%ld, ", partitions[piv][i]);
+			printf("%ld, ", partitions[procs-1][i]);
 			}
 		printf("\n\n");
 
@@ -242,7 +242,7 @@ long int employee(long int numKeys, int procs){
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
 		for(int i=0; i<count;i++){
-			printf("%ld, ", partitions[piv][i]);
+			printf("%ld, ", partitions[procs-1][i]);
 			}
 		printf("\n\n");
 
