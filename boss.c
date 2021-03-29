@@ -87,7 +87,7 @@ long int boss(long int numKeys, int procs){
 	qsort(samples, procs*procs, sizeof(long int), comparison);
 	long int* pivots = malloc((procs-1)*sizeof(long int));
 
-	for(int mult = 1; mult<p; mult++){
+	for(int mult = 1; mult<procs; mult++){
 		pivots[mult-1] = samples[(p + mult*procs)-1];
 	}
 	printf("Piv: %ld\n", pivots[0]);
