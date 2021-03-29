@@ -85,12 +85,12 @@ long int boss(long int numKeys, int procs){
 	//sort them, then select pivots using p and procs values
 	
 	qsort(samples, procs*procs, sizeof(long int), comparison);
-	long int pivots[procs-1];
+	long int* pivots = malloc((procs-1)*sizeof(long int));
 
 	for(int mult = 1; mult<p; mult++){
 		pivots[mult-1] = samples[(p + mult*procs)-1];
 	}
-
+	printf("Piv: %ld\n", pivots[0]);
 	long int *SendBuff = malloc((procs-1) * sizeof(long int));
 	memcpy(SendBuff, pivots, (procs-1)*sizeof(long int));
 	//have pivots, now send them out to employees
@@ -195,7 +195,7 @@ long int employee(long int numKeys, int procs){
 	long int* pivots = malloc((procs-1)*sizeof(long int));
 	MPI_Recv(pivBuff, procs-1, MPI_LONG, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 	
-	*pivots = *pivBuff;
+	memcpy(pivots, pivBuff, (procs-1)*sizeof(long int));
 
 	free(pivBuff);
 	//create our partitions
