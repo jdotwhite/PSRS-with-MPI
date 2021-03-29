@@ -62,7 +62,6 @@ long int boss(long int numKeys, int procs){
 	
 	long int samples[procs*procs];
 	//find samplesn
-	printf("Samples:\n");
 	for(int sample = 0; sample < procs; sample++){
 		samples[sample] = array[sample*w];
 		}
@@ -77,10 +76,7 @@ long int boss(long int numKeys, int procs){
 		free(sampleBuff);
 
 	}
-	for(int i = 0; i<procs*procs; i++){
-		printf("%ld\n", samples[i]);
-	}
-
+	
 	//now we have the samples from all processors
 	//sort them, then select pivots using p and procs values
 	
@@ -104,8 +100,6 @@ long int boss(long int numKeys, int procs){
 	
 	long int index = 0;
 	long int initial = 0;
-	printf("boss here 1\n");
-	fflush(stdout);
 	for(int piv = 0; piv<procs-1; piv++){
 		long int count = 0; 
 		
@@ -123,7 +117,6 @@ long int boss(long int numKeys, int procs){
 		initial = index;
 
 	}
-	printf("boss here 2");
 	//partitions[procs-1] = (long int*)malloc(localKeys*sizeof(long int));
 	long int count = 0; 
 	while(index < localKeys){
@@ -145,8 +138,6 @@ long int boss(long int numKeys, int procs){
 		MPI_Send(partBuff, subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
 		free(partitions[sendRank]);
 		}
-	
-	printf("boss here3\n");
 
 	for (int recvRank = 1; recvRank<procs; recvRank++){
 		long int *size = malloc(sizeof(long int));
@@ -192,9 +183,7 @@ long int boss(long int numKeys, int procs){
 	for(int i = 0; i<numKeys; i++){
 		printf("%ld\n", sorted[i]);
 	}
-	free(array);	
-	printf("boss here3\n");
-	
+	free(array);		
 	return 0;
 }
 
@@ -224,9 +213,8 @@ long int employee(long int numKeys, int procs){
 	//find samples
 	for(int sample = 0; sample < procs; sample++){
 		samples[sample] = array[sample*w];
-		//printf("%ld\n", samples[sample]);
-	}
-	printf("employee here1\n");
+		}
+
 	//samples collected, send those bad boys on their way
 	//Begin Phase 2
 
@@ -252,7 +240,6 @@ long int employee(long int numKeys, int procs){
 	long int index = 0;
 	long int initial = 0;
 	for(int piv = 0; piv<procs-1; piv++){
-		printf("Pivot: %ld\n", pivots[piv]);
 		long int count = 0; 
 
 		while((array[index] <= pivots[piv]) && (index < localKeys)){
@@ -269,9 +256,7 @@ long int employee(long int numKeys, int procs){
 		initial = index;
 
 	}
-	//partitions[procs-1] = (long int*)malloc(localKeys*sizeof(long int));
-	printf("employee here 2\n");
-
+	
 	long int count = 0;
 	while(index < localKeys){
 		index++;
@@ -322,18 +307,12 @@ long int employee(long int numKeys, int procs){
 			free(partitions[i]);
 		}
 	}
-	for(int index=0; index<running_size; index++){
-		printf("%ld, ", final[index]);
-
-	}
 
 	MPI_Send(&running_size, 1, MPI_LONG, 0, 0, MPI_COMM_WORLD);
 	MPI_Send(final, running_size, MPI_LONG, 0, 0, MPI_COMM_WORLD);
 	
 	free(final);
-
 	free(array);
-	printf("employee here 3\n");
 	return 0;
 	}
 
