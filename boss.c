@@ -120,9 +120,6 @@ long int boss(long int numKeys, int procs){
 			//now we have the partition, send it
 			partitions[piv] = (long int*)malloc(count * sizeof(long int));
 			memcpy(partitions[piv], &array[initial], count*sizeof(long int));
-			for(int i=0; i<count;i++){
-				printf("%ld, ", partitions[piv][i]);
-			}
 			printf("\n\n");
 			}
 		initial = index;
@@ -137,6 +134,7 @@ long int boss(long int numKeys, int procs){
 	}
 	subsizes[procs-1] = count;
 	if(count > 0){
+		printf("HERE THANKS");
 		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
