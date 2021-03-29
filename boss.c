@@ -140,9 +140,6 @@ long int boss(long int numKeys, int procs){
 
 
 
-	for(int i = 0; i<procs; i++){
-		free(partitions[i]);
-	}
 	free(array);	
 	printf("boss here3\n");
 	
@@ -233,11 +230,7 @@ long int employee(long int numKeys, int procs){
 	}
 	//now that we have our partitions and their accompanying sizes, 
 	//send the partitions to their appropriate ranks
-	
-	for(int i=0; i<procs; i++){
-		free(partitions[i]);
-	}
-	
+		
 	free(array);
 	printf("employee here 3\n");
 	return 0;
