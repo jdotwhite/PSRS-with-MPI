@@ -28,6 +28,9 @@ int main( int argc, char *argv[]){
 	// then this is the "boss" process
 		printf("boss proc\n");
 		boss(numKeys, procs);
+		double end = MPI_Wtime();
+		printf("Time elapsed: %.8lf\n", end-start);
+	
 	       	
 
 	}
@@ -35,8 +38,6 @@ int main( int argc, char *argv[]){
 		printf("Just an employee\n");
 		employee(numKeys, procs);
 	}
-	double end = MPI_Wtime();
-	printf("Time elapsed: %.8lf\n", end-start);
 	MPI_Finalize();
 	return EXIT_SUCCESS;
 
