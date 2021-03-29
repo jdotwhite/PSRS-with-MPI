@@ -140,28 +140,28 @@ long int boss(long int numKeys, int procs){
 	t2 = MPI_Wtime();
 	printf("P2: %.8lf\n", t2-t1);
 	//Phase 3, partition exchange
-
-	for(int sendRank = 1; sendRank<procs; sendRank++){
-		long int* partBuff = malloc(subsizes[sendRank]*sizeof(long int));
+	
+	for(int sendRank = 0; sendRank< procs; sendRank++){
+		
+		long int *partBuff = malloc(subsizes[sendRank]*sizeof(long int));
+		long int *sizeRec = malloc(sizeof(long int));
+		long int *sizeSend = malloc(sizeof(long int));
+		*sizeSend = subsizes[sendRank];
 		memcpy(partBuff, partitions[sendRank], subsizes[sendRank]*sizeof(long int));
-		MPI_Send(&subsizes[sendRank], 1, MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
-		MPI_Send(partBuff, subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
 		free(partitions[sendRank]);
-		}
-
-	for (int recvRank = 1; recvRank<procs; recvRank++){
-		long int *size = malloc(sizeof(long int));
-		MPI_Recv(size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		subsizes[recvRank] = *size;
-		long int *partBuff = malloc( *size * sizeof(long int));
-		partitions[recvRank] = malloc( *size * sizeof(long int));
-		long int recSize = *size;
-		free(size);
-		MPI_Recv( partBuff, recSize, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
-		memcpy(partitions[recvRank], partBuff, recSize*sizeof(long int));
+		//send and recv sizes
+		MPI_Sendrecv(sizeSend, 1, MPI_LONG, sendRank, 0, sizeRec, 1, MPI_LONG, sendRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		subsizes[sendRank] = *sizeRec;
+		MPI_Sendrecv(partBuff, *sizeSend, MPI_LONG, sendRank, 0, partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		free(partBuff);
+		free(sizeRec);
+		free(sizeSend);
 
-		}
+			
+		
+	}
+
+
 	t3 = MPI_Wtime();
 	printf("P3: %.8lf");
 	//Phase 4, Merge, receive, merge
@@ -288,31 +288,29 @@ long int employee(long int numKeys, int procs){
 		}
 	//now that we have our partitions and their accompanying sizes, 
 	//send the partitions to their appropriate ranks
-	
-	for(int sendRank = 0; sendRank<procs; sendRank++){
-		if (sendRank!=rank){
-			long int* partBuff = malloc(subsizes[sendRank]*sizeof(long int));
+	//
+	for(int sendRank = 0; sendRank< procs; sendRank++){
+		if(sendRank != rank){
+			long int *partBuff = malloc(subsizes[sendRank]*sizeof(long int));
+			long int *sizeRec = malloc(sizeof(long int));
+			long int *sizeSend = malloc(sizeof(long int));
+			*sizeSend = subsizes[sendRank];
 			memcpy(partBuff, partitions[sendRank], subsizes[sendRank]*sizeof(long int));
-			MPI_Send(&subsizes[sendRank], 1, MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
-			MPI_Send(partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
 			free(partitions[sendRank]);
-		}
-		}
-
-	for (int recvRank = 0; recvRank<procs; recvRank++){
-		if(recvRank != rank){
-			long int *size = malloc(sizeof(long int));
-			MPI_Recv(size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-			subsizes[recvRank] = *size;
-			long int *partBuff = malloc( *size * sizeof(long int));
-			partitions[recvRank] = malloc( *size * sizeof(long int));
-			long int recSize = *size;
-			free(size);
-			MPI_Recv( partBuff, recSize, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
-			memcpy(partitions[recvRank], partBuff, recSize*sizeof(long int));
+			//send and recv sizes
+			MPI_Sendrecv(sizeSend, 1, MPI_LONG, sendRank, 0, sizeRec, 1, MPI_LONG, sendRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+			subsizes[sendRank] = *sizeRec;
+			MPI_Sendrecv(partBuff, *sizeSend, MPI_LONG, sendRank, 0, partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 			free(partBuff);
+			free(sizeRec);
+			free(sizeSend);
+
+
+			
 		}
 	}
+
+	
 	//now we have the correct partitions, merge them up
 	
 	long int running_size = subsizes[0];
