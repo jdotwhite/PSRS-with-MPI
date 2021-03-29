@@ -108,6 +108,7 @@ long int boss(long int numKeys, int procs){
 	fflush(stdout);
 	for(int piv = 0; piv<procs-1; piv++){
 		long int count = 0; 
+		printf("Pivot: %ld\n", pivots[piv]);
 
 		while((array[index] <= pivots[piv]) && (index < localKeys)){
 			index++;
@@ -201,12 +202,14 @@ long int employee(long int numKeys, int procs){
 	free(pivBuff);
 	//create our partitions
 	
+
 	long int* partitions[procs];
 	long int subsizes[procs];
 	
 	long int index = 0;
 	long int initial = 0;
 	for(int piv = 0; piv<procs-1; piv++){
+		printf("Pivot: %ld\n", pivots[piv]);
 		long int count = 0; 
 
 		while((array[index] <= pivots[piv]) && (index < localKeys)){
