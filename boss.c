@@ -57,7 +57,6 @@ long int boss(long int numKeys, int procs){
 	long int localKeys = numKeys / procs;
 	
 	//Begin phase 1
-	srandom(3*23);
 	long int *array = genKeys(localKeys);
 	qsort(array, localKeys, sizeof(long int), comparison);
 	
@@ -174,7 +173,6 @@ long int employee(long int numKeys, int procs){
 
 	//Begin phase 1
 	//create local array, sort and find samples
-	srandom(rank * 23);
 	long int *array = genKeys(localKeys);
 	qsort(array, localKeys, sizeof(long int), comparison);
 
