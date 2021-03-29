@@ -190,7 +190,7 @@ long int employee(long int numKeys, int procs){
 	
 	int rank;
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	
+	srandom(rank*100);
 	long int firstKey = (rank * numKeys) / procs;
 	long int lastKey = ((rank+1)*numKeys) / procs;
 	long int localKeys = lastKey - firstKey;
