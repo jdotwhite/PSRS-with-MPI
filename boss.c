@@ -143,6 +143,8 @@ long int boss(long int numKeys, int procs){
 		MPI_Send(partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
 		free(partitions[sendRank]);
 		}
+	
+	printf("boss here3\n");
 
 	for (int recvRank = 1; recvRank<procs; recvRank++){
 		long int size;
@@ -155,7 +157,9 @@ long int boss(long int numKeys, int procs){
 		}
 
 
-
+	for(int i = 0; i<procs; i++){
+		free(partitions[i]);
+	}
 	free(array);	
 	printf("boss here3\n");
 	
@@ -264,12 +268,12 @@ long int employee(long int numKeys, int procs){
 			MPI_Recv( partBuff, size, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
 			memcpy(partitions[recvRank], partBuff, size*sizeof(long int));
 			free(partBuff);
-
 		}
-
 	}
-		
-
+	for(int i=0; i<procs; i++){
+		free(partitions[i]);
+	}
+	
 	free(array);
 	printf("employee here 3\n");
 	return 0;
