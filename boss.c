@@ -152,6 +152,11 @@ long int boss(long int numKeys, int procs){
 		free(partBuff);
 		}
 
+	for(int i =0; i<procs; i++){
+		free(partitions[piv];
+	}
+
+
 	free(array);	
 	printf("boss here\n");
 	
@@ -265,6 +270,11 @@ long int employee(long int numKeys, int procs){
 		}
 
 	}
+		
+	for(int i =0; i<procs; i++){
+		free(partitions[piv];
+	}
+
 
 	free(array);
 	printf("employee here 2");
