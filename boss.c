@@ -229,7 +229,6 @@ long int employee(long int numKeys, int procs){
 		}
 		subsizes[piv] = count;
 		initial = index;
-		free(partitions[piv]);
 
 	}
 	//partitions[procs-1] = (long int*)malloc(localKeys*sizeof(long int));
