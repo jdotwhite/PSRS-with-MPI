@@ -120,6 +120,10 @@ long int boss(long int numKeys, int procs){
 			//now we have the partition, send it
 			partitions[piv] = (long int*)malloc(count * sizeof(long int));
 			memcpy(partitions[piv], &array[initial], count*sizeof(long int));
+			for(int i=0; i<count;i++){
+				printf("%ld, ", partitions[piv][i]);
+			}
+			printf("\n\n");
 			}
 		initial = index;
 
@@ -136,6 +140,11 @@ long int boss(long int numKeys, int procs){
 		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
+		for(int i=0; i<count;i++){
+			printf("%ld, ", partitions[piv][i]);
+			}
+		printf("\n\n");
+
 	}
 
 
@@ -210,6 +219,11 @@ long int employee(long int numKeys, int procs){
 		if(count > 0){
 			partitions[piv] = (long int*)malloc(count * sizeof(long int));
 			memcpy(partitions[piv], &array[initial], count*sizeof(long int));
+			for(int i=0; i<count;i++){
+				printf("%ld, ", partitions[piv][i]);
+			}
+			printf("\n\n");
+
 		}
 		subsizes[piv] = count;
 		initial = index;
@@ -227,6 +241,11 @@ long int employee(long int numKeys, int procs){
 		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
+		for(int i=0; i<count;i++){
+			printf("%ld, ", partitions[piv][i]);
+			}
+		printf("\n\n");
+
 	}
 	//now that we have our partitions and their accompanying sizes, 
 	//send the partitions to their appropriate ranks
