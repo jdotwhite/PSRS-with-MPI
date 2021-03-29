@@ -115,12 +115,12 @@ long int boss(long int numKeys, int procs){
 			count++;
 	
 		}
+		subsizes[piv] = count;
 		if(count > 0){
+			//now we have the partition, send it
 			partitions[piv] = (long int*)malloc(count * sizeof(long int));
 			memcpy(partitions[piv], &array[initial], count*sizeof(long int));
-			free(partitions[piv]);
-		}
-		subsizes[piv] = count;
+			}
 		initial = index;
 
 	}
@@ -131,18 +131,27 @@ long int boss(long int numKeys, int procs){
 		index++;
 		count++;
 	}
+	subsizes[procs-1] = count;
 	if(count > 0){
 		partitions[procs-1] = (long int*)malloc(count * sizeof(long int));
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
-		free(partitions[procs-1]);
 	}
-
-
-	//for(int index = 0; index<localKeys; index++){
-	//	printf("index %ld: %ld\n", index, partitions[procs-1][index]);
-	//}
+	for(int sendRank = 1; sendRank<procs; sendRank++){
 	
+		MPI_Send(partitions[piv], subsize[piv], MPI_LONG, piv, 0, MPI_COMM_WORLD);
+		free(partitions[piv]);
+		}
+	for (int recvRank = 1; recvRank<procs; recvRank++){
+		long int size;
+		MPI_Recv(&size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		long int *partBuff = malloc( size * sizeof(long int));
+		partitions[recvRank] = malloc( size * sizeof(long int));
+		MPI_Recv( partBuff, size, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
+		memcpy(partitions[recvRank], partBuff, size*sizeof(long int));
+		free(partBuff);
+		}
+
 	free(array);	
 	printf("boss here\n");
 	
@@ -236,9 +245,25 @@ long int employee(long int numKeys, int procs){
 	//now that we have our partitions and their accompanying sizes, 
 	//send the partitions to their appropriate ranks
 	
-	for(int i = 0; i < procs; i++){
-		long int* SendBuff = malloc(subsizes[i] * sizeof(long int));
-		free(SendBuff);
+	for(int sendRank = 0; sendRank<procs; sendRank++){
+		if (sendRank!=rank){
+			MPI_Send(partitions[piv], subsize[piv], MPI_LONG, piv, 0, MPI_COMM_WORLD);
+			free(partitions[piv]);
+		}
+		}
+
+	for (int recvRank; recvRank<procs; recvRank++){
+		if(recvRank != rank){
+			long int size;
+			MPI_Recv(&size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+			long int *partBuff = malloc( size * sizeof(long int));
+			partitions[recvRank] = malloc( size * sizeof(long int));
+			MPI_Recv( partBuff, size, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD,&status);
+			memcpy(partitions[recvRank], partBuff, size*sizeof(long int));
+			free(partBuff);
+
+		}
+
 	}
 
 	free(array);
