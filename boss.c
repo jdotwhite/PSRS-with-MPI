@@ -72,6 +72,7 @@ long int boss(long int numKeys, int procs){
 		samples[sample] = array[sample*w];
 		}
 	t1 = MPI_Wtime();
+	printf("P1: %.8lf\n", t1-t0);
 	//Phase 2, begin by receiving other samples
 	for(int i=1; i < procs; i++){
 		long int* sampleBuff = malloc(procs*sizeof(long int));
@@ -137,6 +138,7 @@ long int boss(long int numKeys, int procs){
 		subsizes[procs-1] = count;
 	}
 	t2 = MPI_Wtime();
+	printf("P2: %.8lf\n", t2-t1);
 	//Phase 3, partition exchange
 
 	for(int sendRank = 1; sendRank<procs; sendRank++){
@@ -161,6 +163,7 @@ long int boss(long int numKeys, int procs){
 
 		}
 	t3 = MPI_Wtime();
+	printf("P3: %.8lf");
 	//Phase 4, Merge, receive, merge
 
 	long int running_size = subsizes[0];
@@ -192,7 +195,8 @@ long int boss(long int numKeys, int procs){
 		free(partBuff);
 		}
 	t4 = MPI_Wtime();
-	printf("Phase times:\nP1: %.8lf\nP2: %.8lf\nP3: %.8lf\nP4: %.8lf\n", t1-t2, t2-t1, t3-t2, t4-t3);	
+	printf("P4: %.8lf\n", t4-t3);
+	printf("Phase times:\nP1: %.8lf\nP2: %.8lf\nP3: %.8lf\nP4: %.8lf\n", t1-t0, t2-t1, t3-t2, t4-t3);	
 	//for (int i=0; i<numKeys-1; i++){
 	//	if(sorted[i] > sorted[i+1]){
 	//		printf("WRONG");
