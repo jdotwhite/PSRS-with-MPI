@@ -8,6 +8,8 @@ int main( int argc, char *argv[]){
 		exit(EXIT_FAILURE);
 	}
 	MPI_Init( &argc, &argv);
+	
+	double start = MPI_Wtime();
 
 	int numKeys = atoi(argv[1]);
 	int procs = atoi(argv[2]);
@@ -33,7 +35,8 @@ int main( int argc, char *argv[]){
 		printf("Just an employee\n");
 		employee(numKeys, procs);
 	}
-	printf("here\n");
+	double end = MPI_Wtime();
+	printf("Time elapsed: %.8lf\n", end-start);
 	MPI_Finalize();
 	return EXIT_SUCCESS;
 
@@ -44,6 +47,7 @@ int main( int argc, char *argv[]){
 
 long int boss(long int numKeys, int procs){
 	
+	double t0, t1, t2, t3, t4;
 	//take a message from each employee to make sure they're all running
 	MPI_Status status;
 	int dummy;
@@ -58,6 +62,8 @@ long int boss(long int numKeys, int procs){
 	
 	//Begin phase 1
 	long int *array = genKeys(localKeys);
+	t0 = MPI_Wtime();
+	
 	qsort(array, localKeys, sizeof(long int), comparison);
 	
 	long int samples[procs*procs];
@@ -65,6 +71,7 @@ long int boss(long int numKeys, int procs){
 	for(int sample = 0; sample < procs; sample++){
 		samples[sample] = array[sample*w];
 		}
+	t1 = MPI_Wtime();
 	//Phase 2, begin by receiving other samples
 	for(int i=1; i < procs; i++){
 		long int* sampleBuff = malloc(procs*sizeof(long int));
@@ -129,8 +136,9 @@ long int boss(long int numKeys, int procs){
 		memcpy(partitions[procs-1], &array[initial], count*sizeof(long int));
 		subsizes[procs-1] = count;
 	}
+	t2 = MPI_Wtime();
+	//Phase 3, partition exchange
 
-	
 	for(int sendRank = 1; sendRank<procs; sendRank++){
 		long int* partBuff = malloc(subsizes[sendRank]*sizeof(long int));
 		memcpy(partBuff, partitions[sendRank], subsizes[sendRank]*sizeof(long int));
@@ -152,6 +160,9 @@ long int boss(long int numKeys, int procs){
 		free(partBuff);
 
 		}
+	t3 = MPI_Wtime();
+	//Phase 4, Merge, receive, merge
+
 	long int running_size = subsizes[0];
 	long int* final = malloc(running_size*sizeof(long int));
 	memcpy(final, partitions[0], running_size*sizeof(long int));
@@ -179,10 +190,14 @@ long int boss(long int numKeys, int procs){
 		memcpy(&sorted[running_size], partBuff, recSize * sizeof(long int));
 		running_size += recSize;
 		free(partBuff);
-		}	
-	for(int i = 0; i<numKeys; i++){
-		printf("%ld\n", sorted[i]);
-	}
+		}
+	t4 = MPI_Wtime();
+	printf("Phase times:\nP1: %.8lf\nP2: %.8lf\nP3: %.8lf\nP4: %.8lf\n", t1-t2, t2-t1, t3-t2, t4-t3);	
+	//for (int i=0; i<numKeys-1; i++){
+	//	if(sorted[i] > sorted[i+1]){
+	//		printf("WRONG");
+	//	}
+	//}
 	free(array);		
 	return 0;
 }
