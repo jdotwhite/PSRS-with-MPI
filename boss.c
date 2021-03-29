@@ -164,14 +164,34 @@ long int boss(long int numKeys, int procs){
 	long int running_size = subsizes[0];
 	long int* final = malloc(running_size*sizeof(long int));
 	memcpy(final, partitions[0], running_size*sizeof(long int));
+	free(partitions[0]);
+
 	for(int i=1; i<procs; i++){
 		if(subsizes[i] > 0){
 			final = MergeSubs(final, partitions[i], running_size, subsizes[i]);
 			running_size += subsizes[i];
+			free(partitions[i]);
 		}
 	}
+	//receive partitions and merge
+	long int* sorted = malloc(numKeys * sizeof(long int));
+	memcpy(sorted, final, running_size * sizeof(long int));
+	free(final);
+	for(int recvRank = 1; recvRank<procs; recvRank++){
 		
-	
+		long int *size = malloc(sizeof(long int));
+		MPI_Recv(size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		long int* partBuff = malloc( *size * sizeof(long int));
+		long int recSize = *size;
+		free(size);
+		MPI_Recv( partBuff, recSize, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		memcpy(&sorted[running_size], partBuff, recSize * sizeof(long int));
+		running_size += recSize;
+		free(partBuff);
+		}	
+	for(int i = 0; i<numKeys; i++){
+		printf("%ld\n", sorted[i]);
+	}
 	free(array);	
 	printf("boss here3\n");
 	
@@ -294,18 +314,23 @@ long int employee(long int numKeys, int procs){
 	long int running_size = subsizes[0];
 	long int* final = malloc(running_size*sizeof(long int));
 	memcpy(final, partitions[0], running_size*sizeof(long int));
-
+	free(partitions[0]);
 	for(int i=1; i<procs; i++){
 		if(subsizes[i] > 0){
 			final = MergeSubs(final, partitions[i], running_size, subsizes[i]);
 			running_size += subsizes[i];
+			free(partitions[i]);
 		}
 	}
 	for(int index=0; index<running_size; index++){
 		printf("%ld, ", final[index]);
 
 	}
+
+	MPI_Send(&running_size, 1, MPI_LONG, 0, 0, MPI_COMM_WORLD);
+	MPI_Send(final, running_size, MPI_LONG, 0, 0, MPI_COMM_WORLD);
 	
+	free(final);
 
 	free(array);
 	printf("employee here 3\n");
