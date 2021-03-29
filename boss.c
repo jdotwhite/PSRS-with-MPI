@@ -139,7 +139,7 @@ long int boss(long int numKeys, int procs){
 	}
 
 	for(int sendRank = 1; sendRank<procs; sendRank++){
-	
+		MPI_Send(&subsizes[sendRank], 1, MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
 		MPI_Send(partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
 		free(partitions[sendRank]);
 		}
@@ -157,7 +157,7 @@ long int boss(long int numKeys, int procs){
 
 
 	free(array);	
-	printf("boss here\n");
+	printf("boss here3\n");
 	
 	return 0;
 }
@@ -233,7 +233,7 @@ long int employee(long int numKeys, int procs){
 
 	}
 	//partitions[procs-1] = (long int*)malloc(localKeys*sizeof(long int));
-	printf("employee here 2");
+	printf("employee here 2\n");
 
 	long int count = 0;
 	while(index < localKeys){
@@ -250,6 +250,7 @@ long int employee(long int numKeys, int procs){
 	
 	for(int sendRank = 0; sendRank<procs; sendRank++){
 		if (sendRank!=rank){
+			MPI_Send(&subsizes[sendRank], 1, MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
 			MPI_Send(partitions[sendRank], subsizes[sendRank], MPI_LONG, sendRank, 0, MPI_COMM_WORLD);
 			free(partitions[sendRank]);
 		}
@@ -271,7 +272,7 @@ long int employee(long int numKeys, int procs){
 		
 
 	free(array);
-	printf("employee here 2");
+	printf("employee here 3\n");
 	return 0;
 	}
 
