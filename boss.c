@@ -152,6 +152,7 @@ long int boss(long int numKeys, int procs){
 	for (int recvRank = 1; recvRank<procs; recvRank++){
 		long int *size = malloc(sizeof(long int));
 		MPI_Recv(size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		subsizes[recvRank] = *size;
 		long int *partBuff = malloc( *size * sizeof(long int));
 		partitions[recvRank] = malloc( *size * sizeof(long int));
 		long int recSize = *size;
@@ -161,8 +162,16 @@ long int boss(long int numKeys, int procs){
 		free(partBuff);
 
 		}
-
-
+	long int running_size = subsizes[0];
+	long int* final = partitions[0];
+	for(int i=1; i<procs; i++){
+		if(subsizes[i] > 0){
+			final = MergeSubs(final, partitions[i], running_size, subsizes[i]);
+			running_size += subsizes[i];
+		}
+	}
+		
+	
 	free(array);	
 	printf("boss here3\n");
 	
@@ -272,6 +281,7 @@ long int employee(long int numKeys, int procs){
 		if(recvRank != rank){
 			long int *size = malloc(sizeof(long int));
 			MPI_Recv(size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+			subsizes[recvRank] = *size;
 			long int *partBuff = malloc( *size * sizeof(long int));
 			partitions[recvRank] = malloc( *size * sizeof(long int));
 			long int recSize = *size;
@@ -281,7 +291,21 @@ long int employee(long int numKeys, int procs){
 			free(partBuff);
 		}
 	}
+	//now we have the correct partitions, merge them up
+	
+	long int running_size = subsizes[0];
+	long int* final = partitions[0];
+	for(int i=1; i<procs; i++){
+		if(subsizes[i] > 0){
+			final = MergeSubs(final, partitions[i], running_size, subsizes[i]);
+			running_size += subsizes[i];
+		}
+	}
+	for(int index=0; index<running_size; index++){
+		printf("%ld, ", final[index]);
 
+	}
+	
 
 	free(array);
 	printf("employee here 3\n");
