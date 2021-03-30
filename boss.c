@@ -197,7 +197,7 @@ long int boss(long int numKeys, int procs){
 		}
 	t4 = MPI_Wtime();
 	printf("Phase times:\nP1: %.2lf\nP2: %.2lf\nP3: %.2lf\nP4: %.2lf\n", 100*(t1-t0)/(t4-t0), 100*(t2-t1)/(t4-t0), 100*(t3-t2)/(t4-t0), 100*(t4-t3)/(t4-t0));
-	double RDFA = (largest * procs) / numKeys;
+	double RDFA = ((double)largest * (double)procs) / (double)numKeys;
 	printf("RDFA: %.3lf\n", RDFA);
 	//for (int i=0; i<numKeys-1; i++){
 	//	if(sorted[i] > sorted[i+1]){
