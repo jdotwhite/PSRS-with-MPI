@@ -73,7 +73,6 @@ long int boss(long int numKeys, int procs){
 		samples[sample] = array[sample*w];
 		}
 	t1 = MPI_Wtime();
-	printf("P1: %.8lf\n", t1-t0);
 	//Phase 2, begin by receiving other samples
 	for(int i=1; i < procs; i++){
 		long int* sampleBuff = malloc(procs*sizeof(long int));
@@ -95,7 +94,7 @@ long int boss(long int numKeys, int procs){
 	for(int mult = 1; mult<procs; mult++){
 		pivots[mult-1] = samples[(p + mult*procs)-1];
 	}
-	printf("Piv: %ld\n", pivots[0]);
+	//printf("Piv: %ld\n", pivots[0]);
 	long int *SendBuff = malloc((procs-1) * sizeof(long int));
 	memcpy(SendBuff, pivots, (procs-1)*sizeof(long int));
 	//have pivots, now send them out to employees
@@ -139,7 +138,6 @@ long int boss(long int numKeys, int procs){
 		subsizes[procs-1] = count;
 	}
 	t2 = MPI_Wtime();
-	printf("P2: %.8lf\n", t2-t1);
 	//Phase 3, partition exchange
 	
 	for(int sendRank = 0; sendRank< procs; sendRank++){
@@ -165,7 +163,6 @@ long int boss(long int numKeys, int procs){
 
 
 	t3 = MPI_Wtime();
-	printf("P3: %.8lf\n", t3-t2);
 	//Phase 4, Merge, receive, merge
 
 	long int running_size = subsizes[0];
@@ -197,7 +194,6 @@ long int boss(long int numKeys, int procs){
 		free(partBuff);
 		}
 	t4 = MPI_Wtime();
-	printf("P4: %.8lf\n", t4-t3);
 	printf("Phase times:\nP1: %.2lf\nP2: %.2lf\nP3: %.2lf\nP4: %.2lf\n", 100*(t1-t0)/(t4-t0), 100*(t2-t1)/(t4-t0), 100*(t3-t2)/(t4-t0), 100*(t4-t3)/(t4-t0));	
 	//for (int i=0; i<numKeys-1; i++){
 	//	if(sorted[i] > sorted[i+1]){
