@@ -26,7 +26,6 @@ int main( int argc, char *argv[]){
 
 	if (rank == 0){
 	// then this is the "boss" process
-		printf("boss proc\n");
 		boss(numKeys, procs);
 		double end = MPI_Wtime();
 		printf("Time elapsed: %.8lf\n", end-start);
@@ -35,7 +34,6 @@ int main( int argc, char *argv[]){
 
 	}
 	else{
-		printf("Just an employee\n");
 		employee(numKeys, procs);
 	}
 	MPI_Finalize();
