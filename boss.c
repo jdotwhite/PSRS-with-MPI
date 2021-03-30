@@ -29,7 +29,7 @@ int main( int argc, char *argv[]){
 		boss(numKeys, procs);
 		double end = MPI_Wtime();
 		printf("Time elapsed: %.8lf\n", end-start);
-	
+		
 	       	
 
 	}
@@ -179,12 +179,16 @@ long int boss(long int numKeys, int procs){
 	long int* sorted = malloc(numKeys * sizeof(long int));
 	memcpy(sorted, final, running_size * sizeof(long int));
 	free(final);
+	long int largest = subsizes[0];
 	for(int recvRank = 1; recvRank<procs; recvRank++){
 		
 		long int *size = malloc(sizeof(long int));
 		MPI_Recv(size, 1, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		long int* partBuff = malloc( *size * sizeof(long int));
 		long int recSize = *size;
+		if(recSize > largest){
+			largest = recSize;
+		}
 		free(size);
 		MPI_Recv( partBuff, recSize, MPI_LONG, recvRank, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		memcpy(&sorted[running_size], partBuff, recSize * sizeof(long int));
@@ -192,7 +196,9 @@ long int boss(long int numKeys, int procs){
 		free(partBuff);
 		}
 	t4 = MPI_Wtime();
-	printf("Phase times:\nP1: %.2lf\nP2: %.2lf\nP3: %.2lf\nP4: %.2lf\n", 100*(t1-t0)/(t4-t0), 100*(t2-t1)/(t4-t0), 100*(t3-t2)/(t4-t0), 100*(t4-t3)/(t4-t0));	
+	printf("Phase times:\nP1: %.2lf\nP2: %.2lf\nP3: %.2lf\nP4: %.2lf\n", 100*(t1-t0)/(t4-t0), 100*(t2-t1)/(t4-t0), 100*(t3-t2)/(t4-t0), 100*(t4-t3)/(t4-t0));
+	double RDFA = (largest * procs) / numKeys;
+	printf("RDFA: %.3lf\n", RDFA);
 	//for (int i=0; i<numKeys-1; i++){
 	//	if(sorted[i] > sorted[i+1]){
 	//		printf("WRONG");
