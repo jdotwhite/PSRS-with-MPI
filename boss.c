@@ -198,7 +198,7 @@ long int boss(long int numKeys, int procs){
 		}
 	t4 = MPI_Wtime();
 	printf("P4: %.8lf\n", t4-t3);
-	printf("Phase times:\nP1: %.8lf\nP2: %.8lf\nP3: %.8lf\nP4: %.8lf\n", t1-t0, t2-t1, t3-t2, t4-t3);	
+	printf("Phase times:\nP1: %.2lf\nP2: %.2lf\nP3: %.2lf\nP4: %.2lf\n", (t1-t0)/(t4-t0), (t2-t1)/(t4-t0), (t3-t2)/(t4-t0), (t4-t3)/(t4-t0));	
 	//for (int i=0; i<numKeys-1; i++){
 	//	if(sorted[i] > sorted[i+1]){
 	//		printf("WRONG");
